@@ -1,5 +1,5 @@
 ### Multi-stage build
-FROM golang:alipne as build
+FROM golang:alpine as build
 
 RUN go get -u -v github.com/JormungandrK/microservice-tools/gateway
 
