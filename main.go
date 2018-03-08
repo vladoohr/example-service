@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/JormungandrK/microservice-tools/gateway"
@@ -15,7 +16,7 @@ import (
 func main() {
 	var port = flag.Int("p", 8080, "Listen port.")
 	var gwAdminURL = flag.String("gw", "http://kong:8001", "API Gateway admin url")
-	var serviceName = flag.String("name", "example-service", "The name of this service")
+	var serviceName = flag.String("name", "", "The name of this service")
 	var serviceDomain = flag.String("domain", "service.consul", "Internal domain for the server.")
 	var path = flag.String("path", "/example", "Path pattern used for routing requests.")
 	var skipRegister = flag.Bool("skipgw", false, "Skip Gateway self-registration.")
@@ -23,6 +24,10 @@ func main() {
 	flag.Parse()
 
 	log.Printf("Service Configuration:\n\t* Port: %d\n\t* Gateway Admin URL: %s\n\t* Service Name: %s\n\t* Domain: %s\n\t* Path: %s\n", *port, *gwAdminURL, *serviceName, *serviceDomain, *path)
+
+	if serviceName == nil || *serviceName == "" {
+		*serviceName = getEnv("SERVICE_NAME", "example-service")
+	}
 
 	if !*skipRegister {
 		gw := gateway.NewKongGateway(*gwAdminURL, &http.Client{}, &gateway.MicroserviceConfig{
@@ -102,4 +107,12 @@ func main() {
 func writeError(err error, rw http.ResponseWriter) {
 	rw.WriteHeader(500)
 	rw.Write([]byte(err.Error()))
+}
+
+func getEnv(key, defValue string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		val = defValue
+	}
+	return val
 }

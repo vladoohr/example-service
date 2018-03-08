@@ -19,4 +19,4 @@ ENV SERVICE_NAME="example-service"
 ENV SERVICE_DOMAIN="service.consul"
 ENV APIGW_ADMIN_URL="http://kong:8000"
 
-CMD ["/usr/local/bin/example-service", "-gw", "${APIGW_ADMIN_URL}", "-name", "${SERVICE_NAME}", "-p","8080", "-domain", "${SERVICE_DOMAIN}"]
+CMD ["/usr/local/bin/example-service", "-p","8080"]
