@@ -1,7 +1,19 @@
-FROM alpine:latest
+### Multi-stage build
+FROM golang:alipne as build
 
-COPY run.sh /run.sh
-RUN chmod +x /run.sh
+RUN go get -u -v github.com/JormungandrK/microservice-tools/gateway
 
-CMD ["/run.sh"]
+COPY . /go/src/github.com/natemago/example-service
+RUN go install github.com/natemago/example-service
 
+### Main
+FROM alpine:3.7
+
+COPY --from=build /go/bin/example-service /usr/local/bin/example-service
+EXPOSE 8080
+
+ENV SERVICE_NAME="example-service"
+ENV SERVICE_DOMAIN="service.consul"
+ENV APIGW_ADMIN_URL="http://kong:8000"
+
+CMD ["/usr/local/bin/example-service", "-gw", "${APIGW_ADMIN_URL}", "-name", "${SERVICE_NAME}", "-p","8080", "-domain", "${SERVICE_DOMAIN}"]
