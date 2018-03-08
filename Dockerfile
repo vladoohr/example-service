@@ -1,6 +1,9 @@
 ### Multi-stage build
 FROM golang:alpine as build
 
+RUN apk update &&\
+    apk add git
+
 RUN go get -u -v github.com/JormungandrK/microservice-tools/gateway
 
 COPY . /go/src/github.com/natemago/example-service
