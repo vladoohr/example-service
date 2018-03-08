@@ -23,11 +23,12 @@ func main() {
 
 	flag.Parse()
 
-	log.Printf("Service Configuration:\n\t* Port: %d\n\t* Gateway Admin URL: %s\n\t* Service Name: %s\n\t* Domain: %s\n\t* Path: %s\n", *port, *gwAdminURL, *serviceName, *serviceDomain, *path)
-
 	if serviceName == nil || *serviceName == "" {
 		*serviceName = getEnv("SERVICE_NAME", "example-service")
+		fmt.Println("Serv name set to: ", *serviceName)
 	}
+
+	log.Printf("Service Configuration:\n\t* Port: %d\n\t* Gateway Admin URL: %s\n\t* Service Name: %s\n\t* Domain: %s\n\t* Path: %s\n", *port, *gwAdminURL, *serviceName, *serviceDomain, *path)
 
 	if !*skipRegister {
 		gw := gateway.NewKongGateway(*gwAdminURL, &http.Client{}, &gateway.MicroserviceConfig{
@@ -40,6 +41,7 @@ func main() {
 		if err := gw.SelfRegister(); err != nil {
 			log.Fatal("Failed to register on the API Gateway", err.Error())
 		}
+		fmt.Println("Registered on API Gateway.")
 	} else {
 		log.Println("Skipped Gateway registration.")
 	}
