@@ -28,13 +28,21 @@ func main() {
 		fmt.Println("Serv name set to: ", *serviceName)
 	}
 
-	log.Printf("Service Configuration:\n\t* Port: %d\n\t* Gateway Admin URL: %s\n\t* Service Name: %s\n\t* Domain: %s\n\t* Path: %s\n", *port, *gwAdminURL, *serviceName, *serviceDomain, *path)
+	serviceNamespace := getEnv("SERVICE_NAMESPACE", "default")
+	serviceOrganization := getEnv("SERVICE_ORGANIZATION", "default")
+
+	pattern := fmt.Sprintf("/resource/%s/%s/%s", serviceNamespace, serviceOrganization, *path)
+
+	log.Printf("Service Configuration:\n\t* Port: %d\n\t* Gateway Admin URL: %s\n\t* Service Name: %s\n\t* Service Namespace: %s\n\t* Service Organization: %s\n\t* Domain: %s\n\t* Path: %s\n",
+		*port, *gwAdminURL, *serviceName, serviceNamespace, serviceOrganization, *serviceDomain, *path)
+
+	log.Printf("URL Pattern: %s\n", pattern)
 
 	if !*skipRegister {
 		gw := gateway.NewKongGateway(*gwAdminURL, &http.Client{}, &gateway.MicroserviceConfig{
 			MicroserviceName: *serviceName,
 			MicroservicePort: *port,
-			Paths:            []string{*path},
+			Paths:            []string{pattern},
 			VirtualHost:      fmt.Sprintf("%s.%s", *serviceName, *serviceDomain),
 		})
 
