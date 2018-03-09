@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/JormungandrK/microservice-tools/gateway"
@@ -34,7 +35,7 @@ func main() {
 	pattern := fmt.Sprintf("/resource/%s/%s/%s", serviceNamespace, serviceOrganization, *path)
 
 	log.Printf("Service Configuration:\n\t* Port: %d\n\t* Gateway Admin URL: %s\n\t* Service Name: %s\n\t* Service Namespace: %s\n\t* Service Organization: %s\n\t* Domain: %s\n\t* Path: %s\n",
-		*port, *gwAdminURL, *serviceName, serviceNamespace, serviceOrganization, *serviceDomain, *path)
+		*port, *gwAdminURL, *serviceName, serviceNamespace, serviceOrganization, *serviceDomain, strings.TrimPrefix(*path, "/"))
 
 	log.Printf("URL Pattern: %s\n", pattern)
 
