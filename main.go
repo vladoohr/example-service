@@ -55,7 +55,7 @@ func main() {
 		log.Println("Skipped Gateway registration.")
 	}
 
-	http.HandleFunc(*path, func(rw http.ResponseWriter, req *http.Request) {
+	http.HandleFunc(pattern, func(rw http.ResponseWriter, req *http.Request) {
 		start := time.Now().UnixNano()
 		switch method := req.Method; method {
 		case "GET":
